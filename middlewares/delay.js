@@ -1,5 +1,7 @@
 const delay = async (req, res, next) => {
-    await new Promise(resolve => setTimeout(resolve, 250));
+    const randomInteger = (min, max) => Math.floor(min + Math.random() * (max + 1 - min));
+
+    await new Promise(resolve => setTimeout(resolve, randomInteger(250, 950)));
 
     next();
 };

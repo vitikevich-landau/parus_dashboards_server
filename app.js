@@ -6,6 +6,8 @@ var logger = require('morgan');
 
 const kitchenAttendantRouter = require('./routes/kitchen_attendant');
 const latecomersAttendantRouter = require('./routes/latecomers');
+const dashboardsRouter = require('./routes/dashboards');
+
 const cors = require("cors");
 
 const {showAuthPrompt} = require('./middlewares/basic_auth');
@@ -48,5 +50,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api/kitchen-attendant', kitchenAttendantRouter);
 app.use('/api/latecomers', latecomersAttendantRouter);
+app.use('/api/dashboards', dashboardsRouter);
 
 module.exports = app;
