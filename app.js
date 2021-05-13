@@ -7,6 +7,7 @@ var logger = require('morgan');
 const kitchenAttendantRouter = require('./routes/kitchen_attendant');
 const latecomersAttendantRouter = require('./routes/latecomers');
 const dashboardsRouter = require('./routes/dashboards');
+const timeSheetRouter = require('./routes/timesheet');
 
 const cors = require("cors");
 
@@ -51,5 +52,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/kitchen-attendant', kitchenAttendantRouter);
 app.use('/api/latecomers', latecomersAttendantRouter);
 app.use('/api/dashboards', dashboardsRouter);
+app.use('/api/timesheet', timeSheetRouter);
 
 module.exports = app;
