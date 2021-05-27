@@ -1,3 +1,4 @@
+const Utils = require("./Utils");
 const {connectAndExecute, connectAndExecuteMany} = require('../db/config');
 
 class Latecomers {
@@ -54,15 +55,7 @@ class Latecomers {
             {month, year}
         );
 
-        const {metaData, rows} = latecomers;
-
-        return rows.map(
-            v => {
-                const obj = {};
-                v.forEach((k, i) => obj[metaData[i].name] = k);
-                return obj;
-            }
-        );
+        return Utils.convert(latecomers);
     }
     static saveAll = async (data) => {
         /***

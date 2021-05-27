@@ -1,21 +1,16 @@
+const Utils = require("./Utils");
 const {connectAndExecute} = require('../db/config');
 
 class Attendants {
     static TB_NAME = 'UDO_T_PA_KITCHEN_ATTENDANT';
 
     static list = async () => {
-        const data = await connectAndExecute(`
+        const data = await connectAndExecute(
+    `
       select * from ${Attendants.TB_NAME} order by NUM
     `);
-        const {metaData, rows} = data;
 
-        return rows.map(
-            v => {
-                const obj = {};
-                v.forEach((k, i) => obj[metaData[i].name] = k);
-                return obj;
-            }
-        );
+        return Utils.convert(data);
     }
 
     static change = async (fullName, isActive, skipped, num) => {

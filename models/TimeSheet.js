@@ -1,3 +1,4 @@
+const Utils = require("./Utils");
 const {connectAndExecute} = require('../db/config');
 
 class TimeSheet {
@@ -16,15 +17,8 @@ class TimeSheet {
                 DT desc
         `
         );
-        const {metaData, rows} = data;
 
-        return rows.map(
-            v => {
-                const obj = {};
-                v.forEach((k, i) => obj[metaData[i].name] = k);
-                return obj;
-            }
-        );
+        return Utils.convert(data);
     }
 
     static leaveList = async () => {
@@ -40,15 +34,8 @@ class TimeSheet {
                 DT desc
         `
         );
-        const {metaData, rows} = data;
 
-        return rows.map(
-            v => {
-                const obj = {};
-                v.forEach((k, i) => obj[metaData[i].name] = k);
-                return obj;
-            }
-        );
+        return Utils.convert(data);
     }
 
     static update = async record => {
