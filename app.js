@@ -8,6 +8,7 @@ const kitchenAttendantRouter = require('./routes/kitchen_attendant');
 const latecomersAttendantRouter = require('./routes/latecomers');
 const dashboardsRouter = require('./routes/dashboards');
 const timeSheetRouter = require('./routes/timesheet');
+const employeesRouter = require('./routes/employees');
 
 const cors = require("cors");
 
@@ -49,6 +50,7 @@ app.use(showAuthPrompt);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.get('/api/employees', employeesRouter);
 app.use('/api/kitchen-attendant', kitchenAttendantRouter);
 app.use('/api/latecomers', latecomersAttendantRouter);
 app.use('/api/dashboards', dashboardsRouter);
