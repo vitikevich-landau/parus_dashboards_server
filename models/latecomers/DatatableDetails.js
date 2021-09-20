@@ -14,15 +14,37 @@ class DatatableDetails {
                 (
                     select
                         F.FULLNAME,
-                        sum(X.OP_DAY) as OP_DAY,
-                        sum(X.OP_MONTH) as OP_MONTH
+                        NVL(sum(M.OP_MONTH), 0) as OP_MONTH,
+                        NVL(sum(Y.OP_YEAR), 0) as OP_YEAR
                     from
                         UDO_T_PA_PARUS_EMPLOYEES F
                         left join (
                             select
                                 T.FULLNAME,
-                                sum(OP_DAY) as OP_DAY,
-                                sum(OP_MONTH) as OP_MONTH
+                                sum(OP_MONTH) as OP_MONTH,
+                                sum(OP_YEAR) as OP_YEAR
+                            from
+                                UDO_V_PA_LATECOMERS_TODAY T
+                            where
+                                T.DT >= TO_DATE(LPAD('01', 2, '0')
+                                                || '-'
+                                                || LPAD(:month, 2, '0')
+                                                || '-'
+                                                || :year, 'DD-MM-YYYY')
+                                and T.DT <= TO_DATE(LPAD(:day, 2, '0')
+                                                    || '-'
+                                                    || LPAD(:month, 2, '0')
+                                                    || '-'
+                                                    || :year, 'DD-MM-YYYY')
+                            group by
+                                T.FULLNAME
+                        ) M
+                        on F.FULLNAME = M.FULLNAME
+                        left join (
+                            select
+                                T.FULLNAME,
+                                sum(OP_MONTH) as OP_MONTH,
+                                sum(OP_YEAR) as OP_YEAR
                             from
                                 UDO_V_PA_LATECOMERS_TODAY T
                             where
@@ -34,12 +56,12 @@ class DatatableDetails {
                                                     || :year, 'DD-MM-YYYY')
                             group by
                                 T.FULLNAME
-                        ) X
-                        on F.FULLNAME = X.FULLNAME
+                        ) Y
+                        on F.FULLNAME = Y.FULLNAME
                     group by
                         F.FULLNAME
                     order by
-                        F.FULLNAME
+                        OP_YEAR desc
                 ) X
         `,
             {day, month, year}

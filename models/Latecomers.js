@@ -2,11 +2,11 @@ const Utils = require("./Utils");
 const {connectAndExecute, connectAndExecuteMany} = require('../db/config');
 
 class Latecomers {
-    static EMPLOYEES = 'UDO_T_PA_PARUS_EMPLOYEES';
-    static VIEW_LATECOMERS = 'UDO_V_PA_LATECOMERS';
+  static EMPLOYEES = 'UDO_T_PA_PARUS_EMPLOYEES';
+  static VIEW_LATECOMERS = 'UDO_V_PA_LATECOMERS';
 
-    static list = async (month, year) => {
-        const latecomers = await connectAndExecute(`
+  static list = async (month, year) => {
+    const latecomers = await connectAndExecute(`
       select
         F.ID,
         F.FULLNAME,
@@ -52,27 +52,50 @@ class Latecomers {
     order by
         F.FULLNAME
     `,
-            {month, year}
-        );
+      {month, year}
+    );
 
-        return Utils.convert(latecomers);
-    }
-    static saveAll = async (data) => {
-        /***
-         *  Предварительная очистка перед вставкой
-         * */
-        await connectAndExecute(`delete from UDO_T_PA_LATECOMERS_TMP`, {}, {autoCommit: true});
+    return Utils.convert(latecomers);
+  }
+  static saveAll = async data => {
+    /***
+     *  Предварительная очистка перед вставкой
+     * */
+    await connectAndExecute(`delete from UDO_T_PA_LATECOMERS_TMP`, {}, {autoCommit: true});
 
-        return await connectAndExecuteMany(`
+    return await connectAndExecuteMany(`
         insert into UDO_T_PA_LATECOMERS_TMP
             (ID, FULLNAME, M, Y, D1, D2, D3, D4, D5, D6, D7, D8, D9, D10, D11,  D12, D13, D14, D15, D16,D17, D18, D19, D20, D21, D22, D23, D24, D25, D26, D27, D28, D29, D30, D31)
         VALUES
             (:ID, :FULLNAME, :M, :Y, :D1, :D2, :D3, :D4, :D5, :D6, :D7, :D8, :D9, :D10, :D11,  :D12, :D13, :D14, :D15, :D16,:D17, :D18, :D19, :D20, :D21, :D22, :D23, :D24, :D25, :D26, :D27, :D28, :D29, :D30, :D31)
     `,
-            data,
-            {autoCommit: true}
-        );
-    }
+      data,
+      {autoCommit: true}
+    );
+  }
+  static setPeriod = async data => {
+    return await connectAndExecute(`
+           begin
+                UDO_P_PA_LATECOMERS_MASS(to_date(:start_date, 'DD.MM.YYYY'), to_date(:end_date, 'DD.MM.YYYY'), :employee, :day_type, :weekends);
+           end; 
+        `,
+      data,
+      {autoCommit: true}
+    );
+  }
+
+  static checkPeriod = async data => {
+    return await connectAndExecute(`
+        select 
+            UDO_F_PA_LATECOMERS_CHECK(to_date(:start_date,'DD.MM.YYYY'), to_date(:end_date,'DD.MM.YYYY'), :employee)
+        from 
+            DUAL
+    `,
+      data,
+      {autoCommit: true}
+    );
+  }
 
 }
+
 module.exports = Latecomers;

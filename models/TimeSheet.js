@@ -14,7 +14,7 @@ class TimeSheet {
             where 
                 ACTION = 'ВХОД'
             order by 
-                DT desc
+                DT desc, REL_ID desc
         `
         );
 
@@ -31,7 +31,7 @@ class TimeSheet {
             where 
                 ACTION = 'ВЫХОД'
             order by 
-                DT desc
+                DT desc, REL_ID desc
         `
         );
 
@@ -39,11 +39,12 @@ class TimeSheet {
     }
 
     static update = async record => {
-        const {ID, FULLNAME, NOTE, ACTION, DT, TM} = record;
+        const {ID, REL_ID, FULLNAME, NOTE, ACTION, DT, TM} = record;
         return await connectAndExecute(`
             update 
                 ${TimeSheet.TB_NAME} 
             set
+                REL_ID = :REL_ID,
                 FULLNAME = :FULLNAME,
                 NOTE = :NOTE,
                 ACTION = :ACTION,
@@ -52,20 +53,21 @@ class TimeSheet {
             where 
                 ID = :ID
         `,
-            {ID, FULLNAME, NOTE, ACTION, DT, TM},
+            {ID, REL_ID, FULLNAME, NOTE, ACTION, DT, TM},
             {autoCommit: true}
         );
     }
 
     static insert = async record => {
-        const {ID, FULLNAME, NOTE, ACTION, DT, TM} = record;
+        const {ID, REL_ID, FULLNAME, NOTE, ACTION, DT, TM} = record;
 
         return await connectAndExecute(`
             insert into ${TimeSheet.TB_NAME} 
-                (ID, FULLNAME, NOTE, ACTION, DT, TM)
+                (ID, REL_ID, FULLNAME, NOTE, ACTION, DT, TM)
             values 
                 (
-                    :ID, 
+                    :ID,
+                    :REL_ID, 
                     :FULLNAME, 
                     :NOTE, 
                     :ACTION, 
@@ -73,7 +75,7 @@ class TimeSheet {
                     to_date(:TM, 'YYYY-MM-DD HH24:MI:SS')
                 )
         `,
-            {ID, FULLNAME, NOTE, ACTION, DT, TM},
+            {ID, REL_ID, FULLNAME, NOTE, ACTION, DT, TM},
             {autoCommit: true}
         );
     }
